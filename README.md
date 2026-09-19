@@ -4,7 +4,7 @@ An interactive side-by-side comparison viewer between raw drone flight footage a
 
 ## Live Assets
 Assets are hosted on Hugging Face:
-- **Video**: [flight.MP4](https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/flight.MP4)
+- **Video**: [flight_web.mp4](https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/flight_web.mp4)
 - **3D Model**: [reconstruction.glb](https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/reconstruction.glb)
 
 ## Running Locally
