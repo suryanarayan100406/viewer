@@ -1,0 +1,6 @@
+# Ignore media and 3D model files
+models/
+data/
+*.glb
+*.mp4
+*.MP4

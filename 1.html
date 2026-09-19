@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Drone Reconstruction Comparison</title>
+
+    <script type="module"
+        src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #070a0f;
+            color: #f5f7fa;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+
+        header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+
+            background: #0d1219;
+            border-bottom: 1px solid #202936;
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #2563eb;
+            font-size: 18px;
+        }
+
+        h1 {
+            font-size: 17px;
+            margin: 0;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: #7f8b9a;
+            margin-top: 3px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            font-size: 12px;
+            color: #9ca8b7;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        /* MAIN */
+
+        main {
+            height: calc(100vh - 64px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* COMPARISON */
+
+        .comparison {
+            flex: 1;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            min-height: 0;
+        }
+
+        .panel {
+            position: relative;
+            background: #030507;
+            border-right: 1px solid #202936;
+
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        .panel-title {
+            position: absolute;
+
+            top: 14px;
+            left: 14px;
+
+            z-index: 10;
+
+            padding: 7px 11px;
+
+            border-radius: 7px;
+
+            background: rgba(9, 13, 19, 0.9);
+            border: 1px solid #303a49;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            backdrop-filter: blur(8px);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+
+            display: block;
+
+            object-fit: contain;
+            background: #000;
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 100%;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    #1a222d 0%,
+                    #0d1218 55%,
+                    #080c11 100%
+                );
+        }
+
+        /* MODEL INFO */
+
+        .model-info {
+            position: absolute;
+
+            bottom: 14px;
+            right: 14px;
+
+            z-index: 10;
+
+            padding: 9px 12px;
+
+            border-radius: 7px;
+
+            background: rgba(9, 13, 19, 0.88);
+            border: 1px solid #303a49;
+
+            font-size: 11px;
+            color: #9ca8b7;
+        }
+
+        /* BOTTOM CONTROL BAR */
+
+        .controls {
+            height: 82px;
+
+            padding: 12px 20px;
+
+            background: #0d1219;
+
+            border-top: 1px solid #202936;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        button {
+            border: 1px solid #344052;
+
+            background: #151c26;
+            color: white;
+
+            border-radius: 7px;
+
+            padding: 8px 13px;
+
+            cursor: pointer;
+
+            font-size: 12px;
+        }
+
+        button:hover {
+            background: #202a38;
+        }
+
+        .play-button {
+            background: #2563eb;
+            border-color: #2563eb;
+            font-weight: 600;
+        }
+
+        .play-button:hover {
+            background: #3474f5;
+        }
+
+        #seekBar {
+            flex: 1;
+            accent-color: #2563eb;
+            cursor: pointer;
+        }
+
+        .time {
+            min-width: 95px;
+
+            text-align: right;
+
+            font-family: monospace;
+            font-size: 12px;
+
+            color: #9ca8b7;
+        }
+
+        /* SPEED */
+
+        .speed {
+            display: flex;
+            gap: 5px;
+        }
+
+        .speed button.active {
+            background: #2563eb;
+            border-color: #2563eb;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 800px) {
+
+            body {
+                overflow: auto;
+            }
+
+            main {
+                height: auto;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                height: 450px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="title">
+
+        <div class="logo">
+            ◈
+        </div>
+
+        <div>
+            <h1>Drone Reconstruction Viewer</h1>
+
+            <div class="subtitle">
+                Original Flight Video ↔ 3D Reconstruction
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="status">
+
+        <div class="status-dot"></div>
+
+        Local Reconstruction
+
+    </div>
+
+</header>
+
+
+<main>
+
+    <section class="comparison">
+
+        <!-- VIDEO -->
+
+        <div class="panel">
+
+            <div class="panel-title">
+                📹 ORIGINAL FLIGHT
+            </div>
+
+            <video
+                id="video"
+                preload="metadata"
+                playsinline>
+            </video>
+
+        </div>
+
+
+        <!-- 3D MODEL -->
+
+        <div class="panel">
+
+            <div class="panel-title">
+                🧊 3D RECONSTRUCTION
+            </div>
+
+            <model-viewer
+                id="model"
+                camera-controls
+                auto-rotate
+                rotation-per-second="20deg"
+                shadow-intensity="1"
+                exposure="1"
+                environment-image="neutral"
+                interaction-prompt="none">
+
+            </model-viewer>
+
+
+            <div class="model-info">
+                reconstruction.glb
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONTROLS -->
+
+    <section class="controls">
+
+        <div class="control-row">
+
+            <button
+                class="play-button"
+                onclick="togglePlay()"
+                id="playButton">
+                ▶ Play
+            </button>
+
+
+            <button onclick="skip(-5)">
+                −5s
+            </button>
+
+
+            <button onclick="skip(5)">
+                +5s
+            </button>
+
+
+            <input
+                id="seekBar"
+                type="range"
+                min="0"
+                max="100"
+                value="0"
+                step="0.01">
+
+
+            <div
+                class="time"
+                id="time">
+                00:00 / 00:00
+            </div>
+
+
+            <div class="speed">
+
+                <button
+                    onclick="setSpeed(0.5, this)">
+                    0.5×
+                </button>
+
+                <button
+                    class="active"
+                    onclick="setSpeed(1, this)">
+                    1×
+                </button>
+
+                <button
+                    onclick="setSpeed(2, this)">
+                    2×
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    /*
+    ============================================================
+    YOUR FILES
+    ============================================================
+    */
+
+    const VIDEO_PATH = "./data/flight.mp4";
+
+    const MODEL_PATH = "./models/reconstruction.glb";
+
+
+    /*
+    ============================================================
+    ELEMENTS
+    ============================================================
+    */
+
+    const video =
+        document.getElementById("video");
+
+    const model =
+        document.getElementById("model");
+
+    const seekBar =
+        document.getElementById("seekBar");
+
+    const timeDisplay =
+        document.getElementById("time");
+
+    const playButton =
+        document.getElementById("playButton");
+
+
+    /*
+    ============================================================
+    LOAD FILES
+    ============================================================
+    */
+
+    video.src = VIDEO_PATH;
+
+    model.src = MODEL_PATH;
+
+
+    /*
+    ============================================================
+    VIDEO METADATA
+    ============================================================
+    */
+
+    video.addEventListener(
+        "loadedmetadata",
+        function () {
+
+            seekBar.max =
+                video.duration;
+
+            updateTime();
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    VIDEO TIME UPDATE
+    ============================================================
+    */
+
+    video.addEventListener(
+        "timeupdate",
+        function () {
+
+            seekBar.value =
+                video.currentTime;
+
+            updateTime();
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    PLAY / PAUSE
+    ============================================================
+    */
+
+    function togglePlay() {
+
+        if (video.paused) {
+
+            video.play();
+
+            playButton.innerText =
+                "⏸ Pause";
+
+        } else {
+
+            video.pause();
+
+            playButton.innerText =
+                "▶ Play";
+
+        }
+
+    }
+
+
+    video.addEventListener(
+        "play",
+        function () {
+
+            playButton.innerText =
+                "⏸ Pause";
+
+        }
+    );
+
+
+    video.addEventListener(
+        "pause",
+        function () {
+
+            playButton.innerText =
+                "▶ Play";
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    SEEK
+    ============================================================
+    */
+
+    seekBar.addEventListener(
+        "input",
+        function () {
+
+            video.currentTime =
+                Number(seekBar.value);
+
+            updateTime();
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    SKIP
+    ============================================================
+    */
+
+    function skip(seconds) {
+
+        video.currentTime += seconds;
+
+    }
+
+
+    /*
+    ============================================================
+    FORMAT TIME
+    ============================================================
+    */
+
+    function formatTime(seconds) {
+
+        if (!Number.isFinite(seconds)) {
+
+            return "00:00";
+
+        }
+
+        const minutes =
+            Math.floor(seconds / 60);
+
+        const secs =
+            Math.floor(seconds % 60);
+
+        return (
+            String(minutes).padStart(2, "0")
+            +
+            ":"
+            +
+            String(secs).padStart(2, "0")
+        );
+
+    }
+
+
+    function updateTime() {
+
+        timeDisplay.innerText =
+            formatTime(video.currentTime)
+            +
+            " / "
+            +
+            formatTime(video.duration);
+
+    }
+
+
+    /*
+    ============================================================
+    PLAYBACK SPEED
+    ============================================================
+    */
+
+    function setSpeed(speed, button) {
+
+        video.playbackRate =
+            speed;
+
+        document
+            .querySelectorAll(".speed button")
+            .forEach(
+                b => b.classList.remove("active")
+            );
+
+        button.classList.add("active");
+
+    }
+
+
+    /*
+    ============================================================
+    KEYBOARD SHORTCUTS
+    ============================================================
+    */
+
+    document.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.code === "Space"
+                &&
+                document.activeElement.tagName !== "INPUT"
+            ) {
+
+                event.preventDefault();
+
+                togglePlay();
+
+            }
+
+
+            if (event.code === "ArrowRight") {
+
+                skip(1);
+
+            }
+
+
+            if (event.code === "ArrowLeft") {
+
+                skip(-1);
+
+            }
+
+        }
+    );
+
+
+    /*
+    ============================================================
+    MODEL LOADING
+    ============================================================
+    */
+
+    model.addEventListener(
+        "load",
+        function() {
+
+            console.log(
+                "3D reconstruction loaded successfully."
+            );
+
+        }
+    );
+
+
+    model.addEventListener(
+        "error",
+        function(event) {
+
+            console.error(
+                "Failed to load reconstruction.glb",
+                event
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
