@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Drone Reconstruction Comparison</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <script type="module"
+    <title>Drone Reconstruction Viewer</title>
+
+    <!-- Google Model Viewer -->
+    <script
+        type="module"
         src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
     </script>
 
@@ -17,264 +23,277 @@
 
         body {
             margin: 0;
-            background: #070a0f;
-            color: #f5f7fa;
             font-family: Arial, Helvetica, sans-serif;
-            overflow: hidden;
+            background: #0b0f14;
+            color: white;
+            overflow-x: hidden;
         }
 
-        /* HEADER */
-
         header {
-            height: 64px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 24px;
-
-            background: #0d1219;
-            border-bottom: 1px solid #202936;
+            padding: 0 25px;
+            background: #111821;
+            border-bottom: 1px solid #26313d;
         }
 
-        .title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo {
-            width: 34px;
-            height: 34px;
-            border-radius: 9px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: #2563eb;
-            font-size: 18px;
-        }
-
-        h1 {
-            font-size: 17px;
+        header h1 {
             margin: 0;
+            font-size: 22px;
         }
 
-        .subtitle {
-            font-size: 11px;
-            color: #7f8b9a;
-            margin-top: 3px;
+        header span {
+            color: #8d9aaa;
+            font-size: 14px;
         }
 
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-
-            font-size: 12px;
-            color: #9ca8b7;
+        .main {
+            padding: 20px;
         }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #22c55e;
-        }
-
-        /* MAIN */
-
-        main {
-            height: calc(100vh - 64px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* COMPARISON */
 
         .comparison {
-            flex: 1;
-
             display: grid;
             grid-template-columns: 1fr 1fr;
-
-            min-height: 0;
+            gap: 20px;
         }
 
         .panel {
-            position: relative;
-            background: #030507;
-            border-right: 1px solid #202936;
-
+            background: #111821;
+            border: 1px solid #26313d;
+            border-radius: 14px;
+            overflow: hidden;
             min-width: 0;
-            min-height: 0;
         }
 
-        .panel:last-child {
-            border-right: none;
+        .panel-header {
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 18px;
+            border-bottom: 1px solid #26313d;
         }
 
         .panel-title {
-            position: absolute;
+            font-weight: bold;
+            font-size: 16px;
+        }
 
-            top: 14px;
-            left: 14px;
-
-            z-index: 10;
-
-            padding: 7px 11px;
-
-            border-radius: 7px;
-
-            background: rgba(9, 13, 19, 0.9);
-            border: 1px solid #303a49;
-
+        .status {
             font-size: 12px;
-            font-weight: 600;
+            color: #8d9aaa;
+        }
 
-            backdrop-filter: blur(8px);
+        .media-container {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            background: #05080b;
         }
 
         video {
             width: 100%;
             height: 100%;
-
-            display: block;
-
             object-fit: contain;
-            background: #000;
+            display: block;
+            background: black;
         }
 
         model-viewer {
             width: 100%;
             height: 100%;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    #1a222d 0%,
-                    #0d1218 55%,
-                    #080c11 100%
-                );
+            background: #05080b;
+            --poster-color: #05080b;
         }
 
-        /* MODEL INFO */
-
-        .model-info {
+        .loading {
             position: absolute;
-
-            bottom: 14px;
-            right: 14px;
-
+            inset: 0;
             z-index: 10;
-
-            padding: 9px 12px;
-
-            border-radius: 7px;
-
-            background: rgba(9, 13, 19, 0.88);
-            border: 1px solid #303a49;
-
-            font-size: 11px;
-            color: #9ca8b7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(5, 8, 11, 0.94);
+            transition: opacity 0.3s ease;
         }
 
-        /* BOTTOM CONTROL BAR */
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 4px solid #303b48;
+            border-top-color: #4da3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: #c6d0db;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .progress {
+            width: 300px;
+            max-width: 80%;
+            height: 6px;
+            background: #27313b;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 14px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: #4da3ff;
+            transition: width 0.2s ease;
+        }
 
         .controls {
-            height: 82px;
-
-            padding: 12px 20px;
-
-            background: #0d1219;
-
-            border-top: 1px solid #202936;
-        }
-
-        .control-row {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+            padding: 12px;
+            background: #0e151d;
+            border-top: 1px solid #26313d;
+            flex-wrap: wrap;
         }
 
-        button {
-            border: 1px solid #344052;
-
-            background: #151c26;
+        button,
+        select {
+            background: #1a2530;
             color: white;
-
-            border-radius: 7px;
-
-            padding: 8px 13px;
-
+            border: 1px solid #344250;
+            border-radius: 8px;
+            padding: 8px 12px;
             cursor: pointer;
-
-            font-size: 12px;
+            font-size: 13px;
         }
 
-        button:hover {
-            background: #202a38;
+        button:hover,
+        select:hover {
+            background: #243241;
         }
 
-        .play-button {
-            background: #2563eb;
-            border-color: #2563eb;
-            font-weight: 600;
+        input[type="range"] {
+            accent-color: #4da3ff;
+            cursor: pointer;
         }
 
-        .play-button:hover {
-            background: #3474f5;
-        }
-
-        #seekBar {
+        .timeline {
             flex: 1;
-            accent-color: #2563eb;
-            cursor: pointer;
+            min-width: 150px;
         }
 
         .time {
-            min-width: 95px;
+            font-size: 12px;
+            color: #8d9aaa;
+            white-space: nowrap;
+        }
 
-            text-align: right;
+        .bottom {
+            margin-top: 20px;
+            padding: 15px 18px;
+            background: #111821;
+            border: 1px solid #26313d;
+            border-radius: 14px;
+        }
 
+        .url {
             font-family: monospace;
             font-size: 12px;
-
-            color: #9ca8b7;
+            color: #8d9aaa;
+            word-break: break-all;
+            margin-top: 5px;
         }
 
-        /* SPEED */
+        .error {
+            position: absolute;
+            inset: 0;
+            z-index: 20;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 30px;
+            background: rgba(80, 10, 10, 0.95);
+        }
 
-        .speed {
+        .error.show {
             display: flex;
-            gap: 5px;
         }
 
-        .speed button.active {
-            background: #2563eb;
-            border-color: #2563eb;
+        .error-content {
+            max-width: 650px;
         }
 
-        /* RESPONSIVE */
+        .error h3 {
+            margin-top: 0;
+            color: #ff7777;
+        }
 
-        @media(max-width: 800px) {
+        .error pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            text-align: left;
+            background: #160b0b;
+            padding: 12px;
+            border-radius: 8px;
+            color: #ffb5b5;
+            font-size: 12px;
+        }
 
-            body {
-                overflow: auto;
-            }
+        .model-controls {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            z-index: 5;
+            display: flex;
+            gap: 7px;
+        }
 
-            main {
-                height: auto;
-            }
-
+        @media (max-width: 900px) {
             .comparison {
                 grid-template-columns: 1fr;
             }
 
-            .panel {
-                height: 450px;
+            .media-container {
+                height: 420px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 0 15px;
             }
 
+            header span {
+                display: none;
+            }
+
+            .main {
+                padding: 10px;
+            }
+
+            .media-container {
+                height: 320px;
+            }
         }
     </style>
 </head>
@@ -282,149 +301,218 @@
 <body>
 
 <header>
-
-    <div class="title">
-
-        <div class="logo">
-            ◈
-        </div>
-
-        <div>
-            <h1>Drone Reconstruction Viewer</h1>
-
-            <div class="subtitle">
-                Original Flight Video ↔ 3D Reconstruction
-            </div>
-        </div>
-
-    </div>
-
-
-    <div class="status">
-
-        <div class="status-dot"></div>
-
-        Local Reconstruction
-
-    </div>
-
+    <h1>🚁 Drone Reconstruction Viewer</h1>
+    <span>Flight Video ↔ 3D Reconstruction</span>
 </header>
 
+<main class="main">
 
-<main>
-
-    <section class="comparison">
+    <div class="comparison">
 
         <!-- VIDEO -->
+        <section class="panel">
 
-        <div class="panel">
+            <div class="panel-header">
+                <div class="panel-title">
+                    🎥 Original Flight
+                </div>
 
-            <div class="panel-title">
-                📹 ORIGINAL FLIGHT
+                <div
+                    class="status"
+                    id="videoStatus">
+                    Loading...
+                </div>
             </div>
 
-            <video
-                id="video"
-                preload="metadata"
-                playsinline>
-            </video>
+            <div class="media-container">
 
-        </div>
+                <video
+                    id="video"
+                    playsinline
+                    preload="metadata"
+                    crossorigin="anonymous">
+                </video>
+
+                <div
+                    class="loading"
+                    id="videoLoading">
+
+                    <div class="spinner"></div>
+
+                    <div class="loading-text">
+                        Loading flight video...
+                    </div>
+
+                </div>
+
+                <div
+                    class="error"
+                    id="videoError">
+
+                    <div class="error-content">
+
+                        <h3>❌ Video failed to load</h3>
+
+                        <p>
+                            The browser could not decode the video.
+                        </p>
+
+                        <pre id="videoErrorText"></pre>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="controls">
+
+                <button id="playBtn">
+                    ▶ Play
+                </button>
+
+                <button id="muteBtn">
+                    🔊
+                </button>
+
+                <input
+                    id="timeline"
+                    class="timeline"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="0">
+
+                <span
+                    class="time"
+                    id="time">
+                    00:00 / 00:00
+                </span>
+
+                <select id="speed">
+                    <option value="0.25">0.25x</option>
+                    <option value="0.5">0.5x</option>
+                    <option value="1" selected>1x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2">2x</option>
+                </select>
+
+                <button id="fullscreenBtn">
+                    ⛶
+                </button>
+
+            </div>
+
+        </section>
 
 
         <!-- 3D MODEL -->
+        <section class="panel">
 
-        <div class="panel">
+            <div class="panel-header">
 
-            <div class="panel-title">
-                🧊 3D RECONSTRUCTION
+                <div class="panel-title">
+                    🧊 3D Reconstruction
+                </div>
+
+                <div
+                    class="status"
+                    id="modelStatus">
+                    Loading...
+                </div>
+
             </div>
 
-            <model-viewer
-                id="model"
-                camera-controls
-                auto-rotate
-                rotation-per-second="20deg"
-                shadow-intensity="1"
-                exposure="1"
-                environment-image="neutral"
-                interaction-prompt="none">
+            <div class="media-container">
 
-            </model-viewer>
+                <model-viewer
+                    id="model"
+                    camera-controls
+                    shadow-intensity="1"
+                    exposure="1"
+                    environment-image="neutral"
+                    interaction-prompt="auto"
+                    loading="eager"
+                    reveal="auto">
 
+                </model-viewer>
 
-            <div class="model-info">
-                reconstruction.glb
+                <div
+                    class="loading"
+                    id="modelLoading">
+
+                    <div class="spinner"></div>
+
+                    <div
+                        class="loading-text"
+                        id="modelLoadingText">
+
+                        Loading 3D reconstruction...
+                    </div>
+
+                    <div class="progress">
+
+                        <div
+                            class="progress-bar"
+                            id="modelProgress">
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div
+                    class="error"
+                    id="modelError">
+
+                    <div class="error-content">
+
+                        <h3>❌ 3D model failed to load</h3>
+
+                        <p>
+                            The GLB could not be loaded.
+                        </p>
+
+                        <pre id="modelErrorText"></pre>
+
+                    </div>
+
+                </div>
+
+                <div class="model-controls">
+
+                    <button id="resetBtn">
+                        🎯 Reset
+                    </button>
+
+                    <button id="rotateBtn">
+                        🔄 Rotate
+                    </button>
+
+                </div>
+
             </div>
 
+        </section>
+
+    </div>
+
+
+    <div class="bottom">
+
+        <strong>Assets</strong>
+
+        <div class="url">
+            Video:
+            https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/flight.MP4
         </div>
 
-    </section>
-
-
-    <!-- CONTROLS -->
-
-    <section class="controls">
-
-        <div class="control-row">
-
-            <button
-                class="play-button"
-                onclick="togglePlay()"
-                id="playButton">
-                ▶ Play
-            </button>
-
-
-            <button onclick="skip(-5)">
-                −5s
-            </button>
-
-
-            <button onclick="skip(5)">
-                +5s
-            </button>
-
-
-            <input
-                id="seekBar"
-                type="range"
-                min="0"
-                max="100"
-                value="0"
-                step="0.01">
-
-
-            <div
-                class="time"
-                id="time">
-                00:00 / 00:00
-            </div>
-
-
-            <div class="speed">
-
-                <button
-                    onclick="setSpeed(0.5, this)">
-                    0.5×
-                </button>
-
-                <button
-                    class="active"
-                    onclick="setSpeed(1, this)">
-                    1×
-                </button>
-
-                <button
-                    onclick="setSpeed(2, this)">
-                    2×
-                </button>
-
-            </div>
-
+        <div class="url">
+            Model:
+            https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/reconstruction.glb
         </div>
 
-    </section>
+    </div>
 
 </main>
 
@@ -432,21 +520,23 @@
 <script>
 
     /*
-    ============================================================
-    YOUR FILES
-    ============================================================
-    */
+     * ============================================================
+     * HUGGING FACE ASSETS
+     * ============================================================
+     */
 
-    const VIDEO_PATH = "./data/flight.mp4";
+    const VIDEO_PATH =
+        "https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/flight.MP4";
 
-    const MODEL_PATH = "./models/reconstruction.glb";
+    const MODEL_PATH =
+        "https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/reconstruction.glb";
 
 
     /*
-    ============================================================
-    ELEMENTS
-    ============================================================
-    */
+     * ============================================================
+     * ELEMENTS
+     * ============================================================
+     */
 
     const video =
         document.getElementById("video");
@@ -454,279 +544,525 @@
     const model =
         document.getElementById("model");
 
-    const seekBar =
-        document.getElementById("seekBar");
+    const videoLoading =
+        document.getElementById("videoLoading");
 
-    const timeDisplay =
+    const modelLoading =
+        document.getElementById("modelLoading");
+
+    const videoStatus =
+        document.getElementById("videoStatus");
+
+    const modelStatus =
+        document.getElementById("modelStatus");
+
+    const videoError =
+        document.getElementById("videoError");
+
+    const modelError =
+        document.getElementById("modelError");
+
+    const videoErrorText =
+        document.getElementById("videoErrorText");
+
+    const modelErrorText =
+        document.getElementById("modelErrorText");
+
+    const modelProgress =
+        document.getElementById("modelProgress");
+
+    const modelLoadingText =
+        document.getElementById("modelLoadingText");
+
+    const playBtn =
+        document.getElementById("playBtn");
+
+    const muteBtn =
+        document.getElementById("muteBtn");
+
+    const timeline =
+        document.getElementById("timeline");
+
+    const time =
         document.getElementById("time");
 
-    const playButton =
-        document.getElementById("playButton");
+    const speed =
+        document.getElementById("speed");
+
+    const fullscreenBtn =
+        document.getElementById("fullscreenBtn");
+
+    const resetBtn =
+        document.getElementById("resetBtn");
+
+    const rotateBtn =
+        document.getElementById("rotateBtn");
 
 
     /*
-    ============================================================
-    LOAD FILES
-    ============================================================
-    */
+     * ============================================================
+     * LOAD VIDEO
+     * ============================================================
+     */
 
     video.src = VIDEO_PATH;
 
-    model.src = MODEL_PATH;
+    video.load();
 
 
     /*
-    ============================================================
-    VIDEO METADATA
-    ============================================================
-    */
+     * ============================================================
+     * VIDEO EVENTS
+     * ============================================================
+     */
 
-    video.addEventListener(
-        "loadedmetadata",
-        function () {
+    video.addEventListener("loadedmetadata", () => {
 
-            seekBar.max =
-                video.duration;
+        videoLoading.classList.add("hidden");
 
-            updateTime();
+        videoStatus.textContent = "Ready";
+
+        updateTime();
+
+        console.log(
+            "Video loaded:",
+            video.duration,
+            "seconds"
+        );
+
+    });
+
+
+    video.addEventListener("canplay", () => {
+
+        videoLoading.classList.add("hidden");
+
+        videoStatus.textContent = "Ready";
+
+    });
+
+
+    video.addEventListener("waiting", () => {
+
+        videoStatus.textContent = "Buffering...";
+
+    });
+
+
+    video.addEventListener("playing", () => {
+
+        videoStatus.textContent = "Playing";
+
+        playBtn.textContent = "⏸ Pause";
+
+    });
+
+
+    video.addEventListener("pause", () => {
+
+        videoStatus.textContent = "Paused";
+
+        playBtn.textContent = "▶ Play";
+
+    });
+
+
+    video.addEventListener("timeupdate", updateTime);
+
+
+    video.addEventListener("error", () => {
+
+        videoLoading.classList.add("hidden");
+
+        videoStatus.textContent = "Error";
+
+        videoError.classList.add("show");
+
+        let message =
+            "Browser could not load/decode the MP4.";
+
+        if (video.error) {
+
+            message +=
+                "\n\nMediaError code: " +
+                video.error.code;
+
+            if (video.error.message) {
+
+                message +=
+                    "\n" +
+                    video.error.message;
+
+            }
 
         }
-    );
+
+        message +=
+            "\n\nURL:\n" +
+            VIDEO_PATH;
+
+        videoErrorText.textContent = message;
+
+        console.error(
+            "VIDEO ERROR:",
+            video.error
+        );
+
+    });
 
 
     /*
-    ============================================================
-    VIDEO TIME UPDATE
-    ============================================================
-    */
+     * ============================================================
+     * PLAY / PAUSE
+     * ============================================================
+     */
 
-    video.addEventListener(
-        "timeupdate",
-        function () {
-
-            seekBar.value =
-                video.currentTime;
-
-            updateTime();
-
-        }
-    );
-
-
-    /*
-    ============================================================
-    PLAY / PAUSE
-    ============================================================
-    */
-
-    function togglePlay() {
+    playBtn.addEventListener("click", async () => {
 
         if (video.paused) {
 
-            video.play();
+            try {
 
-            playButton.innerText =
-                "⏸ Pause";
+                await video.play();
+
+            } catch (error) {
+
+                console.error(
+                    "Play failed:",
+                    error
+                );
+
+            }
 
         } else {
 
             video.pause();
 
-            playButton.innerText =
-                "▶ Play";
-
         }
+
+    });
+
+
+    /*
+     * ============================================================
+     * MUTE
+     * ============================================================
+     */
+
+    muteBtn.addEventListener("click", () => {
+
+        video.muted = !video.muted;
+
+        muteBtn.textContent =
+            video.muted ? "🔇" : "🔊";
+
+    });
+
+
+    /*
+     * ============================================================
+     * TIMELINE
+     * ============================================================
+     */
+
+    timeline.addEventListener("input", () => {
+
+        if (!video.duration) {
+            return;
+        }
+
+        video.currentTime =
+            (timeline.value / 100) *
+            video.duration;
+
+    });
+
+
+    function updateTime() {
+
+        if (!video.duration) {
+            return;
+        }
+
+        const current =
+            formatTime(video.currentTime);
+
+        const duration =
+            formatTime(video.duration);
+
+        time.textContent =
+            current + " / " + duration;
+
+        timeline.value =
+            (video.currentTime /
+                video.duration) *
+            100;
 
     }
 
-
-    video.addEventListener(
-        "play",
-        function () {
-
-            playButton.innerText =
-                "⏸ Pause";
-
-        }
-    );
-
-
-    video.addEventListener(
-        "pause",
-        function () {
-
-            playButton.innerText =
-                "▶ Play";
-
-        }
-    );
-
-
-    /*
-    ============================================================
-    SEEK
-    ============================================================
-    */
-
-    seekBar.addEventListener(
-        "input",
-        function () {
-
-            video.currentTime =
-                Number(seekBar.value);
-
-            updateTime();
-
-        }
-    );
-
-
-    /*
-    ============================================================
-    SKIP
-    ============================================================
-    */
-
-    function skip(seconds) {
-
-        video.currentTime += seconds;
-
-    }
-
-
-    /*
-    ============================================================
-    FORMAT TIME
-    ============================================================
-    */
 
     function formatTime(seconds) {
 
         if (!Number.isFinite(seconds)) {
-
             return "00:00";
-
         }
 
-        const minutes =
+        const mins =
             Math.floor(seconds / 60);
 
         const secs =
             Math.floor(seconds % 60);
 
         return (
-            String(minutes).padStart(2, "0")
-            +
-            ":"
-            +
+            String(mins).padStart(2, "0") +
+            ":" +
             String(secs).padStart(2, "0")
         );
 
     }
 
 
-    function updateTime() {
-
-        timeDisplay.innerText =
-            formatTime(video.currentTime)
-            +
-            " / "
-            +
-            formatTime(video.duration);
-
-    }
-
-
     /*
-    ============================================================
-    PLAYBACK SPEED
-    ============================================================
-    */
+     * ============================================================
+     * PLAYBACK SPEED
+     * ============================================================
+     */
 
-    function setSpeed(speed, button) {
+    speed.addEventListener("change", () => {
 
         video.playbackRate =
-            speed;
+            Number(speed.value);
 
-        document
-            .querySelectorAll(".speed button")
-            .forEach(
-                b => b.classList.remove("active")
-            );
-
-        button.classList.add("active");
-
-    }
+    });
 
 
     /*
-    ============================================================
-    KEYBOARD SHORTCUTS
-    ============================================================
-    */
+     * ============================================================
+     * FULLSCREEN
+     * ============================================================
+     */
 
-    document.addEventListener(
-        "keydown",
-        function(event) {
+    fullscreenBtn.addEventListener("click", () => {
 
-            if (
-                event.code === "Space"
-                &&
-                document.activeElement.tagName !== "INPUT"
-            ) {
+        const container =
+            video.parentElement;
+
+        if (document.fullscreenElement) {
+
+            document.exitFullscreen();
+
+        } else {
+
+            container.requestFullscreen();
+
+        }
+
+    });
+
+
+    /*
+     * ============================================================
+     * LOAD 3D MODEL
+     * ============================================================
+     */
+
+    console.log(
+        "Loading GLB:",
+        MODEL_PATH
+    );
+
+    model.src = MODEL_PATH;
+
+
+    /*
+     * ============================================================
+     * MODEL EVENTS
+     * ============================================================
+     */
+
+    model.addEventListener("progress", (event) => {
+
+        const progress =
+            event.detail.totalProgress * 100;
+
+        modelProgress.style.width =
+            progress + "%";
+
+        modelLoadingText.textContent =
+            "Loading 3D reconstruction... " +
+            Math.round(progress) +
+            "%";
+
+        modelStatus.textContent =
+            Math.round(progress) +
+            "%";
+
+    });
+
+
+    model.addEventListener("load", () => {
+
+        modelLoading.classList.add("hidden");
+
+        modelStatus.textContent =
+            "Ready";
+
+        modelProgress.style.width =
+            "100%";
+
+        console.log(
+            "GLB loaded successfully"
+        );
+
+    });
+
+
+    model.addEventListener("error", (event) => {
+
+        modelLoading.classList.add("hidden");
+
+        modelStatus.textContent =
+            "Error";
+
+        modelError.classList.add("show");
+
+        const message =
+            "Could not load reconstruction.glb\n\n" +
+            "URL:\n" +
+            MODEL_PATH +
+            "\n\nCheck the browser Console and Network tab.";
+
+        modelErrorText.textContent =
+            message;
+
+        console.error(
+            "MODEL ERROR:",
+            event
+        );
+
+    });
+
+
+    /*
+     * ============================================================
+     * RESET CAMERA
+     * ============================================================
+     */
+
+    resetBtn.addEventListener("click", () => {
+
+        model.cameraOrbit =
+            "0deg 75deg auto";
+
+        model.fieldOfView =
+            "auto";
+
+        model.jumpCameraToGoal();
+
+    });
+
+
+    /*
+     * ============================================================
+     * AUTO ROTATE
+     * ============================================================
+     */
+
+    rotateBtn.addEventListener("click", () => {
+
+        model.autoRotate =
+            !model.autoRotate;
+
+        rotateBtn.textContent =
+            model.autoRotate
+                ? "⏹ Stop"
+                : "🔄 Rotate";
+
+    });
+
+
+    /*
+     * ============================================================
+     * KEYBOARD SHORTCUTS
+     * ============================================================
+     */
+
+    document.addEventListener("keydown", (event) => {
+
+        if (
+            event.target.tagName === "INPUT" ||
+            event.target.tagName === "SELECT"
+        ) {
+            return;
+        }
+
+        switch (event.code) {
+
+            case "Space":
 
                 event.preventDefault();
 
-                togglePlay();
+                if (video.paused) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
 
-            }
-
-
-            if (event.code === "ArrowRight") {
-
-                skip(1);
-
-            }
+                break;
 
 
-            if (event.code === "ArrowLeft") {
+            case "ArrowRight":
 
-                skip(-1);
+                video.currentTime =
+                    Math.min(
+                        video.duration || 0,
+                        video.currentTime + 5
+                    );
 
-            }
+                break;
+
+
+            case "ArrowLeft":
+
+                video.currentTime =
+                    Math.max(
+                        0,
+                        video.currentTime - 5
+                    );
+
+                break;
 
         }
-    );
+
+    });
 
 
     /*
-    ============================================================
-    MODEL LOADING
-    ============================================================
-    */
+     * ============================================================
+     * DEBUG
+     * ============================================================
+     */
 
-    model.addEventListener(
-        "load",
-        function() {
-
-            console.log(
-                "3D reconstruction loaded successfully."
-            );
-
-        }
+    console.log(
+        "=============================="
     );
 
+    console.log(
+        "Drone Viewer"
+    );
 
-    model.addEventListener(
-        "error",
-        function(event) {
+    console.log(
+        "Video:",
+        VIDEO_PATH
+    );
 
-            console.error(
-                "Failed to load reconstruction.glb",
-                event
-            );
+    console.log(
+        "Model:",
+        MODEL_PATH
+    );
 
-        }
+    console.log(
+        "=============================="
     );
 
 </script>

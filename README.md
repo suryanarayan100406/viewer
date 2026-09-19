@@ -1,18 +1,16 @@
-# Drone Reconstruction Comparison Viewer
+# Drone Reconstruction Viewer
 
-An interactive side-by-side viewer comparing drone flight video with 3D photogrammetry/reconstruction models.
+An interactive side-by-side comparison viewer between raw drone flight footage and 3D photogrammetry/reconstruction models.
 
-## Setup & Running Locally
+## Live Assets
+Assets are hosted on Hugging Face:
+- **Video**: [flight.MP4](https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/flight.MP4)
+- **3D Model**: [reconstruction.glb](https://huggingface.co/exoticsuryaa/drone-reconstruction-assets/resolve/main/reconstruction.glb)
 
-1. Place your assets in the respective folders:
-   - **Video**: `data/flight.mp4` (or configure path in `index.html`)
-   - **3D Model**: `models/reconstruction.glb` (or configure path in `index.html`)
-2. Start a local HTTP server (required for loading GLB models via `model-viewer` due to CORS):
-   ```bash
-   # Using Python:
-   python -m http.server 8000
-   ```
-3. Open `http://localhost:8000/index.html` or `http://localhost:8000/1.html` in your web browser.
+## Running Locally
 
-## Note on 3D Assets
-Due to GitHub's file size limit (exceeding 100MB), the 3D `.glb` reconstruction model is excluded from git tracking. Place `reconstruction.glb` inside `models/` locally.
+```bash
+# Start a local static server
+python -m http.server 8000
+```
+Open `http://localhost:8000/index.html` in your web browser.
