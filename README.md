@@ -14,5 +14,5 @@ An interactive side-by-side viewer comparing drone flight video with 3D photogra
    ```
 3. Open `http://localhost:8000/index.html` or `http://localhost:8000/1.html` in your web browser.
 
-## Note on Media & 3D Assets
-Due to large file sizes, raw video files and 3D `.glb` model files are ignored from git tracking.
+## Note on 3D Assets
+Due to GitHub's file size limit (exceeding 100MB), the 3D `.glb` reconstruction model is excluded from git tracking. Place `reconstruction.glb` inside `models/` locally.

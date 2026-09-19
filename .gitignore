@@ -1,6 +1,3 @@
-# Ignore media and 3D model files
+# Ignore 3D model files (large files over 100MB)
 models/
-data/
 *.glb
-*.mp4
-*.MP4
